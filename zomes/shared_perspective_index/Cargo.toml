@@ -1,0 +1,19 @@
+[package]
+name = "shared_perspective_index"
+version = "0.1.0"
+authors = ["jdeepee <joshuadparkin@gmail.com>"]
+edition = "2018"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+name = "shared_perspective_index"
+
+[dependencies]
+derive_more = "0"
+serde = "1"
+serde_json = "1"
+chrono = { version = "0.4", features = ["serde"] }
+thiserror = "1.0.20"
+
+hdk = "0.0.100"
+holo_hash = "0.0.2-alpha.1"

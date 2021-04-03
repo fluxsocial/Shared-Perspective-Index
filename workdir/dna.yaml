@@ -1,0 +1,8 @@
+---
+manifest_version: 1
+name: "shared-perspectives"
+uuid: 00000000-0000-0000-0000-000000000000
+properties: {}
+zomes: 
+  - name: shared_perspective_index
+    bundled: ../target/wasm32-unknown-unknown/release/shared_perspective_index.wasm
