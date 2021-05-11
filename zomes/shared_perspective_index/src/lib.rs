@@ -15,6 +15,15 @@ use utils::err;
 #[hdk_entry(id = "shared_perspective", visibility = "public")]
 #[derive(Clone)]
 #[serde(rename_all = "camelCase")]
+pub struct SignedSharedPerspective {
+    data: SharedPerspective,
+    author: Agent,
+    timestamp: DateTime<Utc>,
+    proof: ExpressionProof,
+}
+
+#[derive(Clone, SerializedBytes, Serialize, Deserialize, Debug)]
+#[serde(rename_all = "camelCase")]
 pub struct SharedPerspective {
     name: String,
     description: String,
@@ -22,9 +31,6 @@ pub struct SharedPerspective {
     link_languages: Vec<String>,
     allowed_expression_languages: Vec<String>,
     required_expression_languages: Vec<String>,
-    author: Agent,
-    timestamp: DateTime<Utc>,
-    proof: ExpressionProof,
 }
 
 // #[derive(Clone, SerializedBytes, Serialize, Deserialize, Debug)]
@@ -39,10 +45,10 @@ pub struct SharedPerspective {
 #[serde(rename_all = "camelCase")]
 pub struct CreateSharedPerspective {
     pub key: String,
-    pub shared_perspective: SharedPerspective,
+    pub shared_perspective: SignedSharedPerspective,
 }
 
-entry_defs![SharedPerspective::entry_def(), Path::entry_def()];
+entry_defs![SignedSharedPerspective::entry_def(), Path::entry_def()];
 
 // Zome functions
 
@@ -53,7 +59,7 @@ fn init(_: ()) -> ExternResult<InitCallbackResult> {
 }
 
 #[hdk_extern]
-pub fn index_shared_perspective(data: CreateSharedPerspective) -> ExternResult<SharedPerspective> {
+pub fn index_shared_perspective(data: CreateSharedPerspective) -> ExternResult<SignedSharedPerspective> {
     let path = Path::from(data.key);
     path.ensure()?;
 
@@ -64,7 +70,7 @@ pub fn index_shared_perspective(data: CreateSharedPerspective) -> ExternResult<S
 }
 
 #[hdk_extern]
-pub fn get_latest_shared_perspective(key: String) -> ExternResult<Option<SharedPerspective>> {
+pub fn get_latest_shared_perspective(key: String) -> ExternResult<Option<SignedSharedPerspective>> {
     let path = Path::from(key);
     let mut links = get_links(path.hash()?, None)?
         .into_inner()
@@ -73,7 +79,7 @@ pub fn get_latest_shared_perspective(key: String) -> ExternResult<Option<SharedP
             Some(chunk) => Ok(Some(
                 chunk
                     .entry()
-                    .to_app_option::<SharedPerspective>()?
+                    .to_app_option::<SignedSharedPerspective>()?
                     .ok_or(err("Expected element to contain app entry data"))?,
             )),
             None => Ok(None),
@@ -90,13 +96,13 @@ pub fn get_latest_shared_perspective(key: String) -> ExternResult<Option<SharedP
                 Some(Err(val.err().unwrap()))
             }
         })
-        .collect::<ExternResult<Vec<SharedPerspective>>>()?;
+        .collect::<ExternResult<Vec<SignedSharedPerspective>>>()?;
     links.sort_by(|a, b| a.timestamp.partial_cmp(&b.timestamp).unwrap());
     Ok(links.first().cloned())
 }
 
 #[hdk_extern]
-pub fn get_all_shared_perspectives(key: String) -> ExternResult<Vec<SharedPerspective>> {
+pub fn get_all_shared_perspectives(key: String) -> ExternResult<Vec<SignedSharedPerspective>> {
     let path = Path::from(key);
     let links = get_links(path.hash()?, None)?
         .into_inner()
@@ -105,7 +111,7 @@ pub fn get_all_shared_perspectives(key: String) -> ExternResult<Vec<SharedPerspe
             Some(chunk) => Ok(Some(
                 chunk
                     .entry()
-                    .to_app_option::<SharedPerspective>()?
+                    .to_app_option::<SignedSharedPerspective>()?
                     .ok_or(err("Expected element to contain app entry data"))?,
             )),
             None => Ok(None),
@@ -122,7 +128,7 @@ pub fn get_all_shared_perspectives(key: String) -> ExternResult<Vec<SharedPerspe
                 Some(Err(val.err().unwrap()))
             }
         })
-        .collect::<ExternResult<Vec<SharedPerspective>>>()?;
+        .collect::<ExternResult<Vec<SignedSharedPerspective>>>()?;
     Ok(links)
 }
 

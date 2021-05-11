@@ -44,9 +44,10 @@ orchestrator.registerScenario("create and get public expression", async (s, t) =
     {
       key: "someuuid", 
       sharedPerspective: {
-        name: "My group", description: "Alice's group", type: "Holochain", linkLanguages: ["langhash://exprurl"],
-        allowedExpressionLanguages: ["langhash://exprurl"],
-        requiredExpressionLanguages: ["langhash://exprurl"],
+        data: {name: "My group", description: "Alice's group", type: "Holochain", linkLanguages: ["langhash://exprurl"],
+          allowedExpressionLanguages: ["langhash://exprurl"],
+          requiredExpressionLanguages: ["langhash://exprurl"],
+        },
         author: {
           did: "did:junto:alice"
         },
@@ -69,9 +70,11 @@ orchestrator.registerScenario("create and get public expression", async (s, t) =
   {
     key: "someuuid", 
     sharedPerspective: {
-      name: "My group 2", description: "Alice's group 2", type: "Holochain", linkLanguages: ["langhash://exprurl"],
-      allowedExpressionLanguages: ["langhash://exprurl"],
-      requiredExpressionLanguages: ["langhash://exprurl"],
+      data: {
+        name: "My group 2", description: "Alice's group 2", type: "Holochain", linkLanguages: ["langhash://exprurl"],
+        allowedExpressionLanguages: ["langhash://exprurl"],
+        requiredExpressionLanguages: ["langhash://exprurl"],
+      },
       author: {
         did: "did:junto:alice"
       },
